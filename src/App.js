@@ -5,7 +5,7 @@ function App() {
 
 const [rowData,setRowData] = useState()
 const [filterData,setFilterData] = useState()
-const [showDropdown,setShowDropdown] = useState(false)
+const [selectData,setSelectData] = useState('(a)')
 
   const onGridReady = useCallback((params) => {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -21,26 +21,27 @@ const [showDropdown,setShowDropdown] = useState(false)
 
   const inputText =(e) => {
     const data = rowData.filter(item =>{
-      if(e.target.value == ''){
-        return item
-      }
-      // else if(item.athlete.toLowerCase().includes(e.target.value.toLowerCase())){
-      //   return item
-      // }
-      else{
-        return item === '' || item.athlete === e.target.value
+      if( selectData === '(a)'){
+         return item.athlete.toLowerCase().includes(e.target.value.toLowerCase())
+      }else if(selectData === 'a()'){
+        return !item.athlete.toLowerCase().includes(e.target.value.toLowerCase())
+      }else if(selectData === '='){
+        return item.athlete === e.target.value
+      }else if(selectData === '!='){
+        return item.athlete != e.target.value
+      }else if(selectData === 'Aa'){
+        return item.athlete.toLowerCase().startsWith(e.target.value.toLowerCase())
+      }else if(selectData === 'aA'){
+        return item.athlete.toLowerCase().endsWith(e.target.value.toLowerCase())
       }
     })
     setFilterData(data)
     console.log('kkkk',data);
-    console.log('kkkk111',e.target.value);
+    console.log('kkkk111',e.target.value , selectData);
   }
   
   return (
-    <div className="App">
-      {console.log('data',rowData)}
-      {showDropdown && <h1>filter</h1>}
-      
+    <div className="App">      
       <table className="table">
   <thead>
     <tr>
@@ -60,15 +61,16 @@ const [showDropdown,setShowDropdown] = useState(false)
       <th scope="col">#</th>
       <th scope="col">
       <div style={{display:'flex'}}>
+        <h2>{selectData}</h2>
         <div class="btn-group" style={{marginRight:10}}>
           <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" />
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li><a class="dropdown-item" href="#">(a)Contains</a></li>
-              <li><a class="dropdown-item" href="#">a() Not Contains</a></li>
-              <li><a class="dropdown-item" href="#">= Equals</a></li>
-              <li><a class="dropdown-item" href="#">!= Not Equal</a></li>
-              <li><a class="dropdown-item" href="#">Aa Start With</a></li>
-              <li><a class="dropdown-item" href="#">aAEnd With</a></li>
+              <li><a class="dropdown-item" href="#" onClick={()=>setSelectData('(a)')}>(a)Contains</a></li>
+              <li><a class="dropdown-item" href="#" onClick={()=>setSelectData('a()')}>a() Not Contains</a></li>
+              <li><a class="dropdown-item" href="#" onClick={()=>setSelectData('=')}>= Equals</a></li>
+              <li><a class="dropdown-item" href="#" onClick={()=>setSelectData('!=')}>!= Not Equal</a></li>
+              <li><a class="dropdown-item" href="#" onClick={()=>setSelectData('Aa')}>Aa Start With</a></li>
+              <li><a class="dropdown-item" href="#" onClick={()=>setSelectData('aA')}>aAEnd With</a></li>
            </ul>
         </div>
         <input type="text" onChange={inputText} placeholder="Enter athlete"/>
@@ -78,7 +80,7 @@ const [showDropdown,setShowDropdown] = useState(false)
         <div class="btn-group" style={{marginRight:10}}>
           <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" />
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li><a class="dropdown-item" href="#">Equal to</a></li>
+              <li><a class="dropdown-item" href="#" >Equal to</a></li>
               <li><a class="dropdown-item" href="#">Greater Then</a></li>
               <li><a class="dropdown-item" href="#">Less Then</a></li>
            </ul>
@@ -94,7 +96,7 @@ const [showDropdown,setShowDropdown] = useState(false)
       <th scope="col"><input type="text" /></th>
     </tr>
   </thead>
-  {(!filterData ?  rowData : filterData)?.map(item => (
+  {(!filterData ?  rowData : filterData)?.slice(0,10)?.map(item => (
   <>
   <tbody key={item.id}>
     <tr >
