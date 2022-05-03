@@ -5,7 +5,7 @@ function App() {
   const [rowData, setRowData] = useState();
   const [filterData, setFilterData] = useState();
   const [selectData, setSelectData] = useState("(a)");
-  const [selectDate, setSelectDate] = useState("(a)");
+  const [selectDate, setSelectDate] = useState("grater");
 
   const onGridReady = useCallback((params) => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
@@ -48,14 +48,20 @@ function App() {
     console.log("kkkk111", e.target.value, selectData);
   };
   const dateFilter = (e) => {
-    const filteredDates2 = rowData.filter((d) => new Date(d).toLocaleString().split(',')[0] - new Date(e.target.value).toLocaleString().split(',')[0] > 0);
-
-    const dates = ["2018-09-12", "2022-05-06", "2018-12-30"];
-    const filteredDates = dates.filter((d) => new Date(d) - new Date() > 0);
-    console.log("hiiiiiiiiii", e.target.value, filteredDates2, new Date().toLocaleString().split(',')[0]);
+    const data = rowData.filter((d) =>{
+      if(selectDate === 'grater'){
+        return new Date(d.date) > new Date(e.target.value)
+      }else if(selectData === 'less'){
+        return new Date(d.date) < new Date(e.target.value)
+      }
+    })
+    setFilterData(data);
+    
+    console.log("hiiiiiiiiii11111111",selectDate,Date.parse('2019-10-01'),data,e.target.value);
   };
   return (
     <div className="App">
+      
       <table className="table">
         <thead>
           <tr>
@@ -93,20 +99,20 @@ function App() {
             <th scope="col">
             <div style={{ display: "flex" }}>
             <div class="btn-group" style={{ marginRight: 10 , alignItems: "center" }}>
-                  <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("=")}> Equals </a></li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("grater")}> Grater Then</a> </li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("less")}> Less Then</a></li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("!=")}> Not Equal</a></li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("range")}>In Range</a></li>
-                  </ul>
-                </div>
-                <div>
-              {selectDate === 'range' && <input type="date" onChange={inputText} style={{marginBottom:10}}/> }
+                <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("=")}> Equals </a></li>
+                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("grater")}> Grater Then</a> </li>
+                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("less")}> Less Then</a></li>
+                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("!=")}> Not Equal</a></li>
+                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("range")}>In Range</a></li>
+                </ul>
+             </div>
+            <div style={{ display: "flex" }}>
+              {selectDate === 'range' && <input type="date" onChange={inputText} style={{marginRight:10}}/> }
               <input type="date" onChange={dateFilter} />
               </div>
-              </div>
+            </div>
             </th>
             <th scope="col"> <input type="text" /> </th>
             <th scope="col"> <input type="text" /> </th>
