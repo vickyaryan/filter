@@ -6,6 +6,8 @@ function App() {
   const [filterData, setFilterData] = useState();
   const [selectData, setSelectData] = useState("(a)");
   const [selectDate, setSelectDate] = useState("grater");
+  const [secSelectDate, setSecSelectDate] = useState();
+  const [number,setNumber] = useState("=")
 
   const onGridReady = useCallback((params) => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
@@ -22,43 +24,55 @@ function App() {
   const inputText = (e) => {
     const data = rowData.filter((item) => {
       if (selectData === "(a)") {
-        return item.athlete
-          .toLowerCase()
-          .includes(e.target.value.toLowerCase());
+        return item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
       } else if (selectData === "a()") {
-        return !item.athlete
-          .toLowerCase()
-          .includes(e.target.value.toLowerCase());
+        return !item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
       } else if (selectData === "=") {
         return item.athlete === e.target.value;
       } else if (selectData === "!=") {
         return item.athlete != e.target.value;
       } else if (selectData === "Aa") {
-        return item.athlete
-          .toLowerCase()
-          .startsWith(e.target.value.toLowerCase());
+        return item.athlete.toLowerCase().startsWith(e.target.value.toLowerCase());
       } else if (selectData === "aA") {
-        return item.athlete
-          .toLowerCase()
-          .endsWith(e.target.value.toLowerCase());
+        return item.athlete.toLowerCase().endsWith(e.target.value.toLowerCase());
       }
     });
     setFilterData(data);
-    console.log("kkkk", data);
-    console.log("kkkk111", e.target.value, selectData);
   };
   const dateFilter = (e) => {
-    const data = rowData.filter((d) =>{
-      if(selectDate === 'grater'){
-        return new Date(d.date) > new Date(e.target.value)
-      }else if(selectData === 'less'){
-        return new Date(d.date) < new Date(e.target.value)
+    const data = rowData.filter((item) =>{
+      if(selectDate === 'greater'){
+        return Date(item.date) < Date.parse(e.target.value);
+      }else if(selectDate === 'less'){
+        return  Date.parse(item.date) >  Date.parse(e.target.value)
+      }else if(selectDate === '='){
+        return  Date.parse(item.date) ===  Date.parse(e.target.value)
+      }else if(selectDate === '!='){
+        return  Date.parse(item.date) !=  Date.parse(e.target.value)
+      }else if( selectDate === 'range'){
+        return Date.parse(secSelectDate) >=  Date.parse(item.date) <=  Date.parse(e.target.value)
       }
     })
     setFilterData(data);
     
-    console.log("hiiiiiiiiii11111111",selectDate,Date.parse('2019-10-01'),data,e.target.value);
+    // rowData.filter((d) =>{
+    //  console.log('date111111111111111',Date.parse(d.date) > Date.parse(e.target.value));
+    //   })
   };
+  const numberFilter = (e) =>{
+     const data = rowData.filter((item) =>{
+      if(number === 'greater'){
+        return item.gold > e.target.value
+      }else if(number === 'less'){
+        return item.gold < e.target.value
+      }else if(number === '='){
+        return item.gold == e.target.value
+      }else if(number === '!='){
+        return item.gold != e.target.value
+      }
+     })
+  setFilterData(data);
+  }
   return (
     <div className="App">
       
@@ -81,15 +95,15 @@ function App() {
             <th scope="col">
               <div style={{ display: "flex" }}>
                 <p>{selectData}</p>
-                <div class="btn-group" style={{ marginRight: 10 }}>
-                  <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectData("(a)")}> (a)Contains </a> </li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectData("a()")}> a() Not Contains</a></li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectData("=")}> = Equals </a></li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectData("!=")}> != Not Equal </a> </li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectData("Aa")}> Aa Start With </a> </li>
-                    <li> <a class="dropdown-item" href="#" onClick={() => setSelectData("aA")}> aA End With</a></li>
+                <div className="btn-group" style={{ marginRight: 10 }}>
+                  <a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
+                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("(a)")}> (a)Contains </a> </li>
+                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("a()")}> a() Not Contains</a></li>
+                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("=")}> = Equals </a></li>
+                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("!=")}> != Not Equal </a> </li>
+                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("Aa")}> Aa Start With </a> </li>
+                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("aA")}> aA End With</a></li>
                   </ul>
                 </div>
                 <input type="text" onChange={inputText} placeholder="Enter athlete" />
@@ -98,28 +112,41 @@ function App() {
             <th scope="col"> <input type="text" /></th>
             <th scope="col">
             <div style={{ display: "flex" }}>
-            <div class="btn-group" style={{ marginRight: 10 , alignItems: "center" }}>
-                <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("=")}> Equals </a></li>
-                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("grater")}> Grater Then</a> </li>
-                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("less")}> Less Then</a></li>
-                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("!=")}> Not Equal</a></li>
-                  <li> <a class="dropdown-item" href="#" onClick={() => setSelectDate("range")}>In Range</a></li>
+            <div className="btn-group" style={{ marginRight: 10 , alignItems: "center" }}>
+                <a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
+                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("=")}> Equals </a></li>
+                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("greater")}> Greater Than</a> </li>
+                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("less")}> Less Than</a></li>
+                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("!=")}> Not Equal</a></li>
+                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("range")}>In Range</a></li>
                 </ul>
              </div>
             <div style={{ display: "flex" }}>
-              {selectDate === 'range' && <input type="date" onChange={inputText} style={{marginRight:10}}/> }
+              {selectDate === 'range' && <input type="date"  onChange={(e)=>setSecSelectDate(e.target.value)} style={{marginRight:10}}/> }
               <input type="date" onChange={dateFilter} />
               </div>
             </div>
             </th>
-            <th scope="col"> <input type="text" /> </th>
-            <th scope="col"> <input type="text" /> </th>
-            <th scope="col"> <input type="text" /> </th>
-            <th scope="col"> <input type="text" /> </th>
-            <th scope="col"> <input type="text" /> </th>
-            <th scope="col"> <input type="text" /> </th>
+            <th scope="col">
+            <div style={{ display: "flex" }}>
+              <div className="btn-group" style={{ marginRight: 10 }}>
+                  <a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
+                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("=")}> Equals </a></li>
+                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("greater")}> Greater Than</a> </li>
+                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("less")}> Less Than</a></li>
+                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("!=")}> Not Equal</a></li>
+                  </ul>
+                </div> 
+              <input type="number" onChange={numberFilter}/> 
+             </div> 
+             </th>
+            <th scope="col"> <input type="number" /> </th>
+            <th scope="col"> <input type="number" /> </th>
+            <th scope="col"> <input type="number" /> </th>
+            <th scope="col"> <input type="number" /> </th>
+            <th scope="col"> <input type="number" /> </th>
           </tr>
         </thead>
         {(!filterData ? rowData : filterData)?.slice(0, 10)?.map((item) => (
