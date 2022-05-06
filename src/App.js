@@ -1,11 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
-
+import Moment from 'moment';
+const datafil = [
+ {athlete: 'Michael Phelps', age: 27, country: 'United States', year: 2012, date: '12/08/2022'},
+ {athlete: 'Aleksey Nemov', age: 24, country: 'Russia', year: 2000, date: '01/10/2024'},
+ {athlete: 'Alicia Coutts', age: 24, country: 'Australia', year: 2012, date: '12/08/2032'},
+ {athlete: 'Missy Franklin', age: 17, country: 'United States', year: 2012, date: '12/08/2052'},
+ {athlete: 'Ryan Lochte', age: 27, country: 'United States', year: 2012, date: '12/08/2042'},
+]
 function App() {
-  const [rowData, setRowData] = useState();
+  const [rowData, setRowData] = useState(datafil);
   const [filterData, setFilterData] = useState();
   const [selectData, setSelectData] = useState("(a)");
-  const [selectDate, setSelectDate] = useState("grater");
+  const [selectDate, setSelectDate] = useState("greater");
   const [secSelectDate, setSecSelectDate] = useState();
   const [number,setNumber] = useState("=")
 
@@ -18,7 +25,7 @@ function App() {
   });
 
   useEffect(() => {
-    onGridReady();
+    // onGridReady();
   }, []);
 
   const inputText = (e) => {
@@ -40,24 +47,28 @@ function App() {
     setFilterData(data);
   };
   const dateFilter = (e) => {
+    var inputDate = Moment(e.target.value).format('DD-MM-YYYY')
     const data = rowData.filter((item) =>{
-      if(selectDate === 'greater'){
-        return Date(item.date) < Date.parse(e.target.value);
-      }else if(selectDate === 'less'){
-        return  Date.parse(item.date) >  Date.parse(e.target.value)
-      }else if(selectDate === '='){
-        return  Date.parse(item.date) ===  Date.parse(e.target.value)
-      }else if(selectDate === '!='){
-        return  Date.parse(item.date) !=  Date.parse(e.target.value)
-      }else if( selectDate === 'range'){
-        return Date.parse(secSelectDate) >=  Date.parse(item.date) <=  Date.parse(e.target.value)
-      }
+    var itemDate = Moment(item.date).format('DD-MM-YYYY')
+
+      if(Date.parse(itemDate) > Date.parse(inputDate) && selectDate === 'greater'){
+        return item
+      }else if(Date.parse(itemDate) <  Date.parse(inputDate) && selectDate === 'less'){
+         return item
+       }else if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
+         return item
+       }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
+         return item
+       }else if(Date.parse(secSelectDate) <  Date.parse(inputDate) && Date.parse(inputDate) <  Date.parse(e.target.value) && selectDate === 'range'){
+         return item
+       }
     })
-    setFilterData(data);
-    
-    // rowData.filter((d) =>{
-    //  console.log('date111111111111111',Date.parse(d.date) > Date.parse(e.target.value));
-    //   })
+    console.log('mmmm',rowData);
+    console.log('mmmm1111',data);
+    setFilterData(data)
+     rowData.filter((d) =>{
+      console.log('date111111111111111',Moment(d.date).format('DD-MM-YYYY'), new Date(d.date).getTime(),new Date(e.target.value).getTime(), d.date, selectDate, e.target.value, Number(Date.parse(d.date)) ==  Number(Date.parse(e.target.value)) ,);
+       })
   };
   const numberFilter = (e) =>{
      const data = rowData.filter((item) =>{
@@ -75,7 +86,6 @@ function App() {
   }
   return (
     <div className="App">
-      
       <table className="table">
         <thead>
           <tr>
@@ -123,7 +133,7 @@ function App() {
                 </ul>
              </div>
             <div style={{ display: "flex" }}>
-              {selectDate === 'range' && <input type="date"  onChange={(e)=>setSecSelectDate(e.target.value)} style={{marginRight:10}}/> }
+              {selectDate === 'range' && <input type="date"  onChange={(e)=>setSecSelectDate(Moment(e.target.value).format('DD-MM-YYYY'))} style={{marginRight:10}}/> }
               <input type="date" onChange={dateFilter} />
               </div>
             </div>
@@ -156,7 +166,7 @@ function App() {
                 <th scope="row">{item.id}</th>
                 <td>{item.athlete}</td>
                 <td>{item.country}</td>
-                <td>{item.date}</td>
+                <td>{Moment(item.date).format('DD-MM-YYYY')}</td>
                 <td>{item.gold}</td>
                 <td>{item.silver}</td>
                 <td>{item.bronze}</td>
