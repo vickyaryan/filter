@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 import Moment from 'moment';
 const datafil = [
- {athlete: 'Michael Phelps', age: 27, country: 'United States', year: 2012, date: '12/08/2022'},
- {athlete: 'Aleksey Nemov', age: 24, country: 'Russia', year: 2000, date: '01/10/2024'},
- {athlete: 'Alicia Coutts', age: 24, country: 'Australia', year: 2012, date: '12/08/2032'},
- {athlete: 'Missy Franklin', age: 17, country: 'United States', year: 2012, date: '12/08/2052'},
- {athlete: 'Ryan Lochte', age: 27, country: 'United States', year: 2012, date: '12/08/2042'},
+ {athlete: 'Michael Phelps', age: 27, country: 'United States', year: 2012, date: '12/08/2022',register: 'y'},
+ {athlete: 'Aleksey Nemov', age: 24, country: 'Russia', year: 2000, date: '01/10/2024',register: 'n'},
+ {athlete: 'Alicia Coutts', age: 24, country: 'Australia', year: 2012, date: '12/08/2032',register: 'y'},
+ {athlete: 'Missy Franklin', age: 17, country: 'United States', year: 2012, date: '12/08/2052',register: 'n'},
+ {athlete: 'Ryan Lochte', age: 27, country: 'United States', year: 2012, date: '12/08/2042',register: 'y'},
 ]
 function App() {
   const [rowData, setRowData] = useState(datafil);
@@ -15,18 +15,17 @@ function App() {
   const [selectDate, setSelectDate] = useState("greater");
   const [secSelectDate, setSecSelectDate] = useState();
   const [number,setNumber] = useState("=")
+  const [value,setValue] = useState()
+  const [checked, setChecked] = useState(false);
 
-  const onGridReady = useCallback((params) => {
-    fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
-      .then((resp) => resp.json())
-      .then((data) => {
-        setRowData(data);
-      });
-  });
-
-  useEffect(() => {
-    // onGridReady();
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
+  //     .then((resp) => resp.json())
+  //     .then((data) => {
+  //       setRowData(data);
+  //      //console.log('hello',data);
+  //     });
+  // }, []);
 
   const inputText = (e) => {
     const data = rowData.filter((item) => {
@@ -47,28 +46,24 @@ function App() {
     setFilterData(data);
   };
   const dateFilter = (e) => {
+    setValue(e.target.value)
     var inputDate = Moment(e.target.value).format('DD-MM-YYYY')
     const data = rowData.filter((item) =>{
     var itemDate = Moment(item.date).format('DD-MM-YYYY')
 
-      if(Date.parse(itemDate) > Date.parse(inputDate) && selectDate === 'greater'){
+      if(Date.parse(item.date) > Date.parse(e.target.value) && selectDate === 'greater'){
         return item
-      }else if(Date.parse(itemDate) <  Date.parse(inputDate) && selectDate === 'less'){
+      }else if(Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'less'){
          return item
        }else if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
          return item
        }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
          return item
-       }else if(Date.parse(secSelectDate) <  Date.parse(inputDate) && Date.parse(inputDate) <  Date.parse(e.target.value) && selectDate === 'range'){
+       }else if(Date.parse(secSelectDate) <  Date.parse(item.date) && Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'range'){
          return item
        }
     })
-    console.log('mmmm',rowData);
-    console.log('mmmm1111',data);
     setFilterData(data)
-     rowData.filter((d) =>{
-      console.log('date111111111111111',Moment(d.date).format('DD-MM-YYYY'), new Date(d.date).getTime(),new Date(e.target.value).getTime(), d.date, selectDate, e.target.value, Number(Date.parse(d.date)) ==  Number(Date.parse(e.target.value)) ,);
-       })
   };
   const numberFilter = (e) =>{
      const data = rowData.filter((item) =>{
@@ -84,8 +79,32 @@ function App() {
      })
   setFilterData(data);
   }
+  const checkButton =() =>{
+    setChecked(!checked)
+    console.log('checked',checked)
+    const data = rowData.filter((item) =>{
+      if(!checked){
+        return item.register === 'y'
+      }
+      else if(checked){
+        return item.register === 'n'
+      }
+     })
+  setFilterData(data);
+  }
+  const ClearDate = () =>{
+    setFilterData('')
+    setValue('')
+    setChecked(false)
+  }
   return (
     <div className="App">
+      <div className="container">
+       <input type="checkbox" defaultChecked={checked} onClick={() => checkButton()}/> 
+       <h2 className="margin">register</h2>
+      <button className="clearData" onClick={() =>ClearDate()}>Clear</button>
+      </div>
+      <>{value}</>
       <table className="table">
         <thead>
           <tr>
@@ -93,6 +112,7 @@ function App() {
             <th scope="col">athlete</th>
             <th scope="col"> country</th>
             <th scope="col">date</th>
+            <th scope="col">register</th>
             <th scope="col">gold</th>
             <th scope="col">silver</th>
             <th scope="col">bronze</th>
@@ -116,7 +136,7 @@ function App() {
                     <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("aA")}> aA End With</a></li>
                   </ul>
                 </div>
-                <input type="text" onChange={inputText} placeholder="Enter athlete" />
+                <input type="text" onChange={inputText}  value={value} placeholder="Enter athlete" />
               </div>
             </th>
             <th scope="col"> <input type="text" /></th>
@@ -133,11 +153,12 @@ function App() {
                 </ul>
              </div>
             <div style={{ display: "flex" }}>
-              {selectDate === 'range' && <input type="date"  onChange={(e)=>setSecSelectDate(Moment(e.target.value).format('DD-MM-YYYY'))} style={{marginRight:10}}/> }
+              {selectDate === 'range' && <input type="date"  onChange={(e)=>setSecSelectDate(e.target.value)} style={{marginRight:10}}/> }
               <input type="date" onChange={dateFilter} />
               </div>
             </div>
             </th>
+            <th scope="col"></th>
             <th scope="col">
             <div style={{ display: "flex" }}>
               <div className="btn-group" style={{ marginRight: 10 }}>
@@ -167,6 +188,7 @@ function App() {
                 <td>{item.athlete}</td>
                 <td>{item.country}</td>
                 <td>{Moment(item.date).format('DD-MM-YYYY')}</td>
+                <td>{item.register}</td>
                 <td>{item.gold}</td>
                 <td>{item.silver}</td>
                 <td>{item.bronze}</td>
