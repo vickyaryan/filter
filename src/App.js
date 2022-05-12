@@ -13,9 +13,10 @@ function App() {
   const [filterData, setFilterData] = useState();
   const [selectData, setSelectData] = useState("(a)");
   const [selectDate, setSelectDate] = useState("greater");
-  const [secSelectDate, setSecSelectDate] = useState();
+  const [secSelectDate, setSecSelectDate] = useState('');
   const [number,setNumber] = useState("=")
-  const [value,setValue] = useState()
+  const [athlete,setAthlete] = useState('')
+  const [fsSelectDate,setFsSelectDate] = useState('')
   const [checked, setChecked] = useState(false);
 
   // useEffect(() => {
@@ -28,6 +29,7 @@ function App() {
   // }, []);
 
   const inputText = (e) => {
+    setAthlete(e.target.value)
     const data = rowData.filter((item) => {
       if (selectData === "(a)") {
         return item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
@@ -46,7 +48,7 @@ function App() {
     setFilterData(data);
   };
   const dateFilter = (e) => {
-    setValue(e.target.value)
+    setFsSelectDate(e.target.value)
     var inputDate = Moment(e.target.value).format('DD-MM-YYYY')
     const data = rowData.filter((item) =>{
     var itemDate = Moment(item.date).format('DD-MM-YYYY')
@@ -94,8 +96,11 @@ function App() {
   }
   const ClearDate = () =>{
     setFilterData('')
-    setValue('')
     setChecked(false)
+    setSecSelectDate('');
+    setFsSelectDate('')
+    setSelectDate('')
+    setAthlete('');
   }
   return (
     <div className="App">
@@ -104,7 +109,6 @@ function App() {
        <h2 className="margin">register</h2>
       <button className="clearData" onClick={() =>ClearDate()}>Clear</button>
       </div>
-      <>{value}</>
       <table className="table">
         <thead>
           <tr>
@@ -136,7 +140,7 @@ function App() {
                     <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("aA")}> aA End With</a></li>
                   </ul>
                 </div>
-                <input type="text" onChange={inputText}  value={value} placeholder="Enter athlete" />
+                <input type="text" onChange={inputText}  value={athlete} placeholder="Enter athlete" />
               </div>
             </th>
             <th scope="col"> <input type="text" /></th>
@@ -153,8 +157,8 @@ function App() {
                 </ul>
              </div>
             <div style={{ display: "flex" }}>
-              {selectDate === 'range' && <input type="date"  onChange={(e)=>setSecSelectDate(e.target.value)} style={{marginRight:10}}/> }
-              <input type="date" onChange={dateFilter} />
+              {selectDate === 'range' && <input type="date" value={secSelectDate}  onChange={(e)=>setSecSelectDate(e.target.value)} style={{marginRight:10}}/> }
+              <input type="date" onChange={dateFilter}  value={fsSelectDate}/>
               </div>
             </div>
             </th>
