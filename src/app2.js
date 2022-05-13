@@ -6,6 +6,7 @@ const datafil = [
  {athlete: 'Aleksey Nemov', age: 24, country: 'Russia', year: 2000, date: '01/10/2024',register: 'n'},
  {athlete: 'Alicia Coutts', age: 24, country: 'Australia', year: 2012, date: '12/08/2032',register: 'y'},
  {athlete: 'Missy Franklin', age: 17, country: 'United States', year: 2012, date: '12/08/2052',register: 'n'},
+ {athlete: 'Missy Franklin', age: 17, country: 'United States', year: 2012, date: '12/08/2052',register: 'y'},
  {athlete: 'Ryan Lochte', age: 27, country: 'United States', year: 2012, date: '12/08/2042',register: 'y'},
 ]
 function App() {
@@ -27,47 +28,95 @@ function App() {
   //      //console.log('hello',data);
   //     });
   // }, []);
-useEffect(() =>{}, [])
-  const inputText = (e) => {
-    setAthlete(e.target.value)
-    setRowData(datafil)
-    console.log('checked',e.target.value);
-    const data = rowData.filter((item) => {
-      if (selectData === "(a)") {
-        return item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
-      } else if (selectData === "a()") {
-        return !item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
-      } else if (selectData === "=") {
-        return item.athlete === e.target.value;
-      } else if (selectData === "!=") {
-        return item.athlete != e.target.value;
-      } else if (selectData === "Aa") {
-        return item.athlete.toLowerCase().startsWith(e.target.value.toLowerCase());
-      } else if (selectData === "aA") {
-        return item.athlete.toLowerCase().endsWith(e.target.value.toLowerCase());
-      }
-    });
-    setRowData(data);
+
+  // useEffect(() => {
+  //   setFilterData(datafil)
+  //   // var inputDate = Moment(fsSelectDate).format('DD-MM-YYYY')
+    
+
+  //   // const athleteInput = filterData.filter((item) => {
+  //   //   if(!checked){
+  //   //     return item.register === 'y'
+  //   //   }
+  //   //   else if(checked){
+  //   //     return item.register === 'n'
+  //   //   }
+
+  //   //   var itemDate = Moment(item.date).format('DD-MM-YYYY')
+  //   //   if (selectData === "(a)") {
+  //   //     return item.athlete.toLowerCase().includes(athlete.toLowerCase());
+  //   //   } else if (selectData === "a()") {
+  //   //     return !item.athlete.toLowerCase().includes(athlete.toLowerCase());
+  //   //   } else if (selectData === "=") {
+  //   //     return item.athlete === athlete;
+  //   //   } else if (selectData === "!=") {
+  //   //     return item.athlete != athlete;
+  //   //   } else if (selectData === "Aa") {
+  //   //     return item.athlete.toLowerCase().startsWith(athlete.toLowerCase());
+  //   //   } else if (selectData === "aA") {
+  //   //     return item.athlete.toLowerCase().endsWith(athlete.toLowerCase());
+  //   //   }
+
+
+  //   //   if(Date.parse(item.date) > Date.parse(fsSelectDate) && selectDate === 'greater'){
+  //   //     return item
+  //   //   }else if(Date.parse(item.date) <  Date.parse(fsSelectDate) && selectDate === 'less'){
+  //   //      return item
+  //   //    }else if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
+  //   //      return item
+  //   //    }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
+  //   //      return item
+  //   //    }else if(Date.parse(secSelectDate) <  Date.parse(item.date) && Date.parse(item.date) <  Date.parse(fsSelectDate) && selectDate === 'range'){
+  //   //      return item
+  //   //    }
+
+
+
+  //   //    console.log('checked11',checked)
+  //   // });
+  //   // setFilterData(athleteInput);
+  //   console.log('checked',athlete,fsSelectDate,checked)
+  // },[athlete,fsSelectDate,checked])
+
+  const inputText = () => {
+    if(athlete != ''){
+      const data = rowData.filter((item) => {
+        if (selectData === "(a)") {
+          return item.athlete.toLowerCase().includes(athlete.toLowerCase());
+        } else if (selectData === "a()") {
+          return !item.athlete.toLowerCase().includes(athlete.toLowerCase());
+        } else if (selectData === "=") {
+          return item.athlete === athlete;
+        } else if (selectData === "!=") {
+          return item.athlete != athlete;
+        } else if (selectData === "Aa") {
+          return item.athlete.toLowerCase().startsWith(athlete.toLowerCase());
+        } else if (selectData === "aA") {
+          return item.athlete.toLowerCase().endsWith(athlete.toLowerCase());
+        }
+      });
+      setFilterData(data);
+    }
+    
   };
   const dateFilter = (e) => {
     setFsSelectDate(e.target.value)
-    var inputDate = Moment(e.target.value).format('DD-MM-YYYY')
+    var inputDate = Moment(fsSelectDate).format('DD-MM-YYYY')
     const data = rowData.filter((item) =>{
     var itemDate = Moment(item.date).format('DD-MM-YYYY')
-
-      if(Date.parse(item.date) > Date.parse(e.target.value) && selectDate === 'greater'){
+      if(Date.parse(item.date) > Date.parse(fsSelectDate) && selectDate === 'greater'){
         return item
-      }else if(Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'less'){
+      }else if(Date.parse(item.date) <  Date.parse(fsSelectDate) && selectDate === 'less'){
          return item
        }else if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
          return item
        }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
          return item
-       }else if(Date.parse(secSelectDate) <  Date.parse(item.date) && Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'range'){
+       }else if(Date.parse(secSelectDate) <  Date.parse(item.date) && Date.parse(item.date) <  Date.parse(fsSelectDate) && selectDate === 'range'){
          return item
        }
     })
-    setRowData(data)
+    setFilterData(data)
   };
   const numberFilter = (e) =>{
      const data = rowData.filter((item) =>{
@@ -81,23 +130,34 @@ useEffect(() =>{}, [])
         return item.gold != e.target.value
       }
      })
-  setRowData(data);
+  setFilterData(data);
   }
   const checkButton =() =>{
-    setChecked(!checked)
-    console.log('checked',checked)
-    const data = rowData.filter((item) =>{
-      if(!checked){
-        return item.register === 'y'
-      }
-      else if(checked){
-        return item.register === 'n'
-      }
-     })
-  setRowData(data);
+      const data = rowData.filter((item) =>{
+        if(checked){
+          return item.register === 'y'
+        }
+        else if(!checked){
+          return item.register === 'n'
+        }
+       })
+    setFilterData(data);
+  console.log('checked1111',filterData)
   }
+
+  
+  useEffect(() => {
+    console.log('useEffect',checked,athlete);
+    checkButton()
+    inputText()
+    
+    
+  },[checked,athlete])
+
+
   const ClearDate = () =>{
-    setRowData(datafil)
+    console.log('clearData');
+    setFilterData(datafil)
     setChecked(false)
     setSecSelectDate('');
     setFsSelectDate('')
@@ -107,9 +167,10 @@ useEffect(() =>{}, [])
   return (
     <div className="App">
       <div className="container">
-       <input type="checkbox" defaultChecked={checked} onClick={() => checkButton()}/> 
+        {checked}
+       <input type="checkbox" defaultChecked={checked} onClick={()=>setChecked(!checked)}/> 
        <h2 className="margin">register</h2>
-      <button className="clearData" onClick={() =>ClearDate()}>Clear</button>
+      <button className="clearData" onClick={ClearDate}>Clear</button>
       </div>
       <table className="table">
         <thead>
@@ -142,7 +203,7 @@ useEffect(() =>{}, [])
                     <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("aA")}> aA End With</a></li>
                   </ul>
                 </div>
-                <input type="text" onChange={inputText}  value={athlete} placeholder="Enter athlete" />
+                <input type="text" onChange={(e)=>setAthlete(e.target.value)}  value={athlete} placeholder="Enter athlete" />
               </div>
             </th>
             <th scope="col"> <input type="text" /></th>
@@ -186,7 +247,7 @@ useEffect(() =>{}, [])
             <th scope="col"> <input type="number" /> </th>
           </tr>
         </thead>
-        {(!filterData ? rowData : filterData)?.slice(0, 10)?.map((item) => (
+        {(!filterData ? rowData : filterData)?.map((item) => (
           <>
             <tbody key={item.id}>
               <tr>
