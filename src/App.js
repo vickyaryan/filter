@@ -27,13 +27,12 @@ function App() {
   //      //console.log('hello',data);
   //     });
   // }, []);
-
-
-  const inputText =async (e) => {
+  
+  const inputText = (e) => {
     setAthlete(e.target.value)
-    setFilterData(datafil)
+    //setRowData(datafil)
     console.log('checked',e.target.value);
-    const data = await rowData.filter((item) => {
+    const data = rowData.filter((item) => {
       if (selectData === "(a)") {
         return item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
       } else if (selectData === "a()") {
@@ -82,7 +81,7 @@ function App() {
         return item.gold != e.target.value
       }
      })
-     setFilterData(data);
+  setRowData(data);
   }
   const checkButton =() =>{
     setChecked(!checked)
@@ -98,7 +97,7 @@ function App() {
      setFilterData(data);
   }
   const ClearDate = () =>{
-    setRowData(datafil)
+    setFilterData(datafil)
     setChecked(false)
     setSecSelectDate('');
     setFsSelectDate('')
@@ -108,7 +107,7 @@ function App() {
   return (
     <div className="App">
       <div className="container">
-       <input type="checkbox" defaultChecked={checked} onClick={() => checkButton()}/> 
+       <input type="checkbox" defaultChecked={checked} onClick={checkButton}/> 
        <h2 className="margin">register</h2>
       <button className="clearData" onClick={() =>ClearDate()}>Clear</button>
       </div>
