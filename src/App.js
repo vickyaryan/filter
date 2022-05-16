@@ -27,12 +27,13 @@ function App() {
   //      //console.log('hello',data);
   //     });
   // }, []);
-useEffect(() =>{}, [])
-  const inputText = (e) => {
+
+
+  const inputText =async (e) => {
     setAthlete(e.target.value)
-    setRowData(datafil)
+    setFilterData(datafil)
     console.log('checked',e.target.value);
-    const data = rowData.filter((item) => {
+    const data = await rowData.filter((item) => {
       if (selectData === "(a)") {
         return item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
       } else if (selectData === "a()") {
@@ -47,7 +48,7 @@ useEffect(() =>{}, [])
         return item.athlete.toLowerCase().endsWith(e.target.value.toLowerCase());
       }
     });
-    setRowData(data);
+    setFilterData(data);
   };
   const dateFilter = (e) => {
     setFsSelectDate(e.target.value)
@@ -67,7 +68,7 @@ useEffect(() =>{}, [])
          return item
        }
     })
-    setRowData(data)
+    setFilterData(data)
   };
   const numberFilter = (e) =>{
      const data = rowData.filter((item) =>{
@@ -81,7 +82,7 @@ useEffect(() =>{}, [])
         return item.gold != e.target.value
       }
      })
-  setRowData(data);
+     setFilterData(data);
   }
   const checkButton =() =>{
     setChecked(!checked)
@@ -94,7 +95,7 @@ useEffect(() =>{}, [])
         return item.register === 'n'
       }
      })
-  setRowData(data);
+     setFilterData(data);
   }
   const ClearDate = () =>{
     setRowData(datafil)
