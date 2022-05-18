@@ -1,16 +1,25 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
+import Date from './component/date'
 import Moment from 'moment';
+import Text from "./component/Text";
+import NumberFilter from './component/NumberFilter'
 const datafil = [
- {athlete: 'Michael Phelps', age: 27, country: 'United States', year: 2012, date: '12/08/2022',register: 'y'},
- {athlete: 'Aleksey Nemov', age: 24, country: 'Russia', year: 2000, date: '01/10/2024',register: 'n'},
- {athlete: 'Alicia Coutts', age: 24, country: 'Australia', year: 2012, date: '12/08/2032',register: 'y'},
- {athlete: 'Missy Franklin', age: 17, country: 'United States', year: 2012, date: '12/08/2052',register: 'n'},
- {athlete: 'Ryan Lochte', age: 27, country: 'United States', year: 2012, date: '12/08/2042',register: 'y'},
+ {"athlete":"Michael Phelps","age":23,"country":"United States","year":2008,"date":"12/08/2022","sport":"Swimming","gold":8,"silver":0,"bronze":0,"total":8,register: 'y'},
+  {"athlete":"Michael Phelps","age":19,"country":"United States","year":2004,"date":"12/09/2032","sport":"Swimming","gold":6,"silver":0,"bronze":2,"total":8,register: 'n'},
+  {"athlete":"Michael Phelps","age":27,"country":"United States","year":2012,"date":"12/10/2012","sport":"Swimming","gold":4,"silver":2,"bronze":0,"total":6,register: 'y'},
+  {"athlete":"Natalie Coughlin","age":25,"country":"United States","year":2008,"date":"12/08/2012","sport":"Swimming","gold":1,"silver":2,"bronze":3,"total":6,register: 'n'},
+  {"athlete":"Aleksey Nemov","age":24,"country":"Russia","year":2000,"date":"12/11/2012","sport":"Gymnastics","gold":2,"silver":1,"bronze":3,"total":6,register: 'y'},
+  {"athlete":"Alicia Coutts","age":24,"country":"Australia","year":2012,"date":"12/12/2012","sport":"Swimming","gold":1,"silver":3,"bronze":1,"total":5,register: 'y'},
+  {"athlete":"Missy Franklin","age":17,"country":"United States","year":2012,"date":"12/01/2012","sport":"Swimming","gold":4,"silver":0,"bronze":1,"total":5,register: 'n'},
+  {"athlete":"Ryan Lochte","age":27,"country":"United States","year":2012,"date":"12/02/2012","sport":"Swimming","gold":2,"silver":2,"bronze":1,"total":5,register: 'y'},
+  {"athlete":"Allison Schmitt","age":22,"country":"United States","year":2012,"date":"12/03/2012","sport":"Swimming","gold":3,"silver":1,"bronze":1,"total":5,register: 'n'},
+  {"athlete":"Natalie Coughlin","age":21,"country":"United States","year":2004,"date":"12/04/2012","sport":"Swimming","gold":2,"silver":2,"bronze":1,"total":5,register: 'y'}
 ]
 function App() {
+  const [inputTextName, setInputTextName] = useState()
   const [rowData, setRowData] = useState(datafil);
-  const [filterData, setFilterData] = useState();
+  const [filterData, setFilterData] = useState(datafil);
   const [selectData, setSelectData] = useState("(a)");
   const [selectDate, setSelectDate] = useState("greater");
   const [secSelectDate, setSecSelectDate] = useState('');
@@ -18,92 +27,99 @@ function App() {
   const [athlete,setAthlete] = useState('')
   const [fsSelectDate,setFsSelectDate] = useState('')
   const [checked, setChecked] = useState(false);
-
-  // useEffect(() => {
-  //   fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
-  //     .then((resp) => resp.json())
-  //     .then((data) => {
-  //       setRowData(data);
-  //      //console.log('hello',data);
-  //     });
-  // }, []);
+  const [numberData, setNumberData] = useState()
+  const conditionData = [
+    {id:'(a)',data:'(a)Contains'},
+    {id:'a()',data:'a() Not Contains'},
+    {id:'=',data:'= Equals'},
+    {id:'=',data:'!= Not Equals'},
+    {id:'Aa',data:'Aa Start With'},
+    {id:'aA',data:'aA End With'}
+  ]
+  const conditionDate = [
+    {id:'greater',data:' Greater Than'},
+    {id:'less',data:'Less Than'},
+    {id:'=',data:'Equals'},
+    {id:'!=',data:'Not Equal'},
+    {id:'range',data:'In Range'},
+  ]
   
-  const inputText = (e) => {
-    setAthlete(e.target.value)
-    //setRowData(datafil)
-    console.log('checked',e.target.value);
-    const data = rowData.filter((item) => {
-      if (selectData === "(a)") {
-        return item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
-      } else if (selectData === "a()") {
-        return !item.athlete.toLowerCase().includes(e.target.value.toLowerCase());
-      } else if (selectData === "=") {
-        return item.athlete === e.target.value;
-      } else if (selectData === "!=") {
-        return item.athlete != e.target.value;
-      } else if (selectData === "Aa") {
-        return item.athlete.toLowerCase().startsWith(e.target.value.toLowerCase());
-      } else if (selectData === "aA") {
-        return item.athlete.toLowerCase().endsWith(e.target.value.toLowerCase());
-      }
-    });
-    setFilterData(data);
-  };
-  const dateFilter = (e) => {
-    setFsSelectDate(e.target.value)
-    var inputDate = Moment(e.target.value).format('DD-MM-YYYY')
-    const data = rowData.filter((item) =>{
-    var itemDate = Moment(item.date).format('DD-MM-YYYY')
+  const DropdownNumber = [
+    {id:'greater',data:' Greater Than'},
+    {id:'less',data:'Less Than'},
+    {id:'=',data:'Equals'},
+    {id:'!=',data:'Not Equal'},
+  ]
+  // useEffect(() => {
+    // setFilterData(datafil)
+  //    fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
+  //      .then((resp) => resp.json())
+  //      .then((data) => {
+  //        setRowData(data);
+  //       //console.log('hello',data);
+  //      });
+  //  }, []);
+  const data123 = () => {
+    console.log('checked',athlete,filterData);
+    if (selectData === "(a)") {
+      return filterData?.filter((item) => { setFilterData(item.athlete.toLowerCase().includes(athlete.toLowerCase())) })
+    }; 
+    if (selectData === "a()") {
+      return filterData?.filter((item) => { setFilterData(!item.athlete.toLowerCase().includes(athlete.toLowerCase())) })
+    }; 
+    if (selectData === "=") {
+      return filterData?.filter((item) => { setFilterData(item.athlete === athlete) })
+    }; 
+    if (selectData === "!=") {
+      return filterData?.filter((item) => { setFilterData(item.athlete != athlete) })
+    }; 
+    if (selectData === "Aa") {
+      return filterData?.filter((item) => { setFilterData(item.athlete.toLowerCase().startsWith(athlete.toLowerCase())) })
+    }; 
+    if (selectData === "aA") {
+      return filterData?.filter((item) => { setFilterData(item.athlete.toLowerCase().endsWith(athlete.toLowerCase())) })
+    }
+  }
 
-      if(Date.parse(item.date) > Date.parse(e.target.value) && selectDate === 'greater'){
+  const dateFilter = (e) => {
+    console.log('ddddddddddddddddddddddddd',e.target.value,selectDate,fsSelectDate,filterData)
+    setFsSelectDate(e.target.value)
+
+    var inputDate = Moment(e.target.value).format('DD-MM-YYYY')
+    const data = filterData.filter((item) =>{
+    var itemDate = Moment(item.date).format('DD-MM-YYYY')
+      console.log('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj',item);
+      if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
+        return setFilterData(item)
+      }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
         return item
-      }else if(Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'less'){
-         return item
-       }else if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
-         return item
-       }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
-         return item
-       }else if(Date.parse(secSelectDate) <  Date.parse(item.date) && Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'range'){
-         return item
-       }
+      }
+      // if(Date.parse(item.date) > Date.parse(e.target.value) && selectDate === 'greater'){
+      //   return item
+      // }else if(Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'less'){
+      //    return item
+      //  }else if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
+      //    return item
+      //  }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
+      //    return item
+      //  }else if(Date.parse(secSelectDate) <  Date.parse(item.date) && Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'range'){
+      //    return item
+      //  }
     })
+    console.log('ddddddddddddddddddddddddd111',data,e.target.value,selectDate,fsSelectDate)
     setFilterData(data)
   };
-  const numberFilter = (e) =>{
-     const data = rowData.filter((item) =>{
-      if(number === 'greater'){
-        return item.gold > e.target.value
-      }else if(number === 'less'){
-        return item.gold < e.target.value
-      }else if(number === '='){
-        return item.gold == e.target.value
-      }else if(number === '!='){
-        return item.gold != e.target.value
-      }
-     })
-  setRowData(data);
-  }
+
   const checkButton =() =>{
     setChecked(!checked)
     console.log('checked',checked)
-    const data = rowData.filter((item) =>{
-      if(!checked){
-        return item.register === 'y'
-      }
-      else if(checked){
-        return item.register === 'n'
-      }
+    const data = filterData.filter((item) =>{
+      if(!checked){return item.register === 'y'}
+      else if(checked){return item.register === 'n'}
      })
      setFilterData(data);
   }
-  const ClearDate = () =>{
-    setFilterData(datafil)
-    setChecked(false)
-    setSecSelectDate('');
-    setFsSelectDate('')
-    setSelectDate('')
-    setAthlete('');
-  }
+  const ClearDate = () =>{setSelectData('(a)'); setFilterData(datafil);setChecked(false);setSecSelectDate('');setFsSelectDate('');setSelectDate('');setAthlete('');setNumberData()}
   return (
     <div className="App">
       <div className="container">
@@ -131,52 +147,22 @@ function App() {
             <th scope="col">
               <div style={{ display: "flex" }}>
                 <p>{selectData}</p>
-                <div className="btn-group" style={{ marginRight: 10 }}>
-                  <a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
-                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("(a)")}> (a)Contains </a> </li>
-                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("a()")}> a() Not Contains</a></li>
-                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("=")}> = Equals </a></li>
-                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("!=")}> != Not Equal </a> </li>
-                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("Aa")}> Aa Start With </a> </li>
-                    <li> <a className="dropdown-item" href="#" onClick={() => setSelectData("aA")}> aA End With</a></li>
-                  </ul>
-                </div>
-                <input type="text" onChange={inputText}  value={athlete} placeholder="Enter athlete" />
+                <Text data={conditionData} filterData={filterData} selectData={selectData} setFilterData={setFilterData} athlete={athlete} setAthlete={setAthlete}  setSelectData={setSelectData} />
               </div>
             </th>
             <th scope="col"> <input type="text" /></th>
             <th scope="col">
             <div style={{ display: "flex" }}>
-            <div className="btn-group" style={{ marginRight: 10 , alignItems: "center" }}>
-                <a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
-                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("=")}> Equals </a></li>
-                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("greater")}> Greater Than</a> </li>
-                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("less")}> Less Than</a></li>
-                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("!=")}> Not Equal</a></li>
-                  <li> <a className="dropdown-item" href="#" onClick={() => setSelectDate("range")}>In Range</a></li>
-                </ul>
-             </div>
-            <div style={{ display: "flex" }}>
-              {selectDate === 'range' && <input type="date" value={secSelectDate}  onChange={(e)=>setSecSelectDate(e.target.value)} style={{marginRight:10}}/> }
-              <input type="date" onChange={dateFilter}  value={fsSelectDate}/>
-              </div>
+              <Date data={conditionDate} setSelectDate={setSelectDate}  secSelectDate={secSelectDate} setSecSelectDate={setSecSelectDate} fsSelectDate={fsSelectDate} dateFilter={dateFilter}/>
             </div>
             </th>
             <th scope="col"></th>
             <th scope="col">
             <div style={{ display: "flex" }}>
-              <div className="btn-group" style={{ marginRight: 10 }}>
-                  <a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
-                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("=")}> Equals </a></li>
-                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("greater")}> Greater Than</a> </li>
-                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("less")}> Less Than</a></li>
-                  <li> <a className="dropdown-item" href="#" onClick={() => setNumber("!=")}> Not Equal</a></li>
-                  </ul>
-                </div> 
-              <input type="number" onChange={numberFilter}/> 
+              <h3>h</h3>
+              <NumberFilter data={DropdownNumber} filterData={filterData}  numberData={numberData} setFilterData={setFilterData} number={number} setNumber={setNumber}/>
+              
+              {/* <input type="number" onChange={numberFilter}  value={numberData}/>  */}
              </div> 
              </th>
             <th scope="col"> <input type="number" /> </th>
@@ -186,21 +172,21 @@ function App() {
             <th scope="col"> <input type="number" /> </th>
           </tr>
         </thead>
-        {(!filterData ? rowData : filterData)?.slice(0, 10)?.map((item) => (
+        {filterData?.slice(0, 10)?.map((item) => (
           <>
             <tbody key={item.id}>
               <tr>
-                <th scope="row">{item.id}</th>
-                <td>{item.athlete}</td>
-                <td>{item.country}</td>
-                <td>{Moment(item.date).format('DD-MM-YYYY')}</td>
-                <td>{item.register}</td>
-                <td>{item.gold}</td>
-                <td>{item.silver}</td>
-                <td>{item.bronze}</td>
-                <td>{item.sport}</td>
-                <td>{item.total}</td>
-                <td>{item.year}</td>
+                <th style={{textAlign: 'center'}} scope="row">{item.id}</th>
+                <td style={{textAlign: 'center'}}>{item.athlete}</td>
+                <td style={{textAlign: 'center'}}>{item.country}</td>
+                <td style={{textAlign: 'center'}}>{Moment(item.date).format('DD-MM-YYYY')}</td>
+                <td style={{textAlign: 'center'}}>{item.register}</td>
+                <td style={{textAlign: 'center'}}>{item.gold}</td>
+                <td style={{textAlign: 'center'}}>{item.silver}</td>
+                <td style={{textAlign: 'center'}}>{item.bronze}</td>
+                <td style={{textAlign: 'center'}}>{item.sport}</td>
+                <td style={{textAlign: 'center'}}>{item.total}</td>
+                <td style={{textAlign: 'center'}}>{item.year}</td>
               </tr>
             </tbody>
           </>
