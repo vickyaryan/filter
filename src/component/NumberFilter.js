@@ -1,23 +1,17 @@
-import React from 'react'
-
 const NumberFilter = (props) => {
-  const filterData = props.filterData;
   const numberFilter = (e) =>{
-    console.log('kkkkkkkkkkkkkkkkk',props,e.target.value,filterData);
     props.setNumberData(e.target.value)
-     const data = filterData?.filter((item) =>{
-       console.log('kkkkkkkkk11111',item);
+     const data =  props.filterData?.filter((item) =>{
        if(props.number === 'greater'){
-         return item.gold > props.numberData
+         return item.gold > e.target.value
        }else if(props.number === 'less'){
-         return item.gold < props.numberData
+         return item.gold < e.target.value
        }else if(props.number === '='){
-         return item.gold == props.numberData
+         return item.gold == e.target.value
        }else if(props.number === '!='){
-         return item.gold != props.numberData
+         return item.gold != e.target.value
        }
      })
-     console.log('kkkkkkkkkkkkkkkkk2222222222',data);
      props.setFilterData(data);
   }
 

@@ -27,7 +27,7 @@ function App() {
   const [athlete,setAthlete] = useState('')
   const [fsSelectDate,setFsSelectDate] = useState('')
   const [checked, setChecked] = useState(false);
-  const [numberData, setNumberData] = useState()
+  const [numberData, setNumberData] = useState('')
   const conditionData = [
     {id:'(a)',data:'(a)Contains'},
     {id:'a()',data:'a() Not Contains'},
@@ -50,6 +50,13 @@ function App() {
     {id:'=',data:'Equals'},
     {id:'!=',data:'Not Equal'},
   ]
+  
+useEffect(() => {
+  setTimeout(() => {
+    setFilterData(datafil)
+  }, 3000);
+  
+},[numberData,fsSelectDate,athlete])
   // useEffect(() => {
     // setFilterData(datafil)
   //    fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
@@ -59,61 +66,10 @@ function App() {
   //       //console.log('hello',data);
   //      });
   //  }, []);
-  const data123 = () => {
-    console.log('checked',athlete,filterData);
-    if (selectData === "(a)") {
-      return filterData?.filter((item) => { setFilterData(item.athlete.toLowerCase().includes(athlete.toLowerCase())) })
-    }; 
-    if (selectData === "a()") {
-      return filterData?.filter((item) => { setFilterData(!item.athlete.toLowerCase().includes(athlete.toLowerCase())) })
-    }; 
-    if (selectData === "=") {
-      return filterData?.filter((item) => { setFilterData(item.athlete === athlete) })
-    }; 
-    if (selectData === "!=") {
-      return filterData?.filter((item) => { setFilterData(item.athlete != athlete) })
-    }; 
-    if (selectData === "Aa") {
-      return filterData?.filter((item) => { setFilterData(item.athlete.toLowerCase().startsWith(athlete.toLowerCase())) })
-    }; 
-    if (selectData === "aA") {
-      return filterData?.filter((item) => { setFilterData(item.athlete.toLowerCase().endsWith(athlete.toLowerCase())) })
-    }
-  }
-
-  const dateFilter = (e) => {
-    console.log('ddddddddddddddddddddddddd',e.target.value,selectDate,fsSelectDate,filterData)
-    setFsSelectDate(e.target.value)
-
-    var inputDate = Moment(e.target.value).format('DD-MM-YYYY')
-    const data = filterData.filter((item) =>{
-    var itemDate = Moment(item.date).format('DD-MM-YYYY')
-      console.log('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj',item);
-      if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
-        return setFilterData(item)
-      }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
-        return item
-      }
-      // if(Date.parse(item.date) > Date.parse(e.target.value) && selectDate === 'greater'){
-      //   return item
-      // }else if(Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'less'){
-      //    return item
-      //  }else if(Date.parse(itemDate) ===  Date.parse(inputDate) && selectDate === '='){
-      //    return item
-      //  }else if(Date.parse(itemDate) !=  Date.parse(inputDate) && selectDate === '!='){
-      //    return item
-      //  }else if(Date.parse(secSelectDate) <  Date.parse(item.date) && Date.parse(item.date) <  Date.parse(e.target.value) && selectDate === 'range'){
-      //    return item
-      //  }
-    })
-    console.log('ddddddddddddddddddddddddd111',data,e.target.value,selectDate,fsSelectDate)
-    setFilterData(data)
-  };
 
   const checkButton =() =>{
     setChecked(!checked)
-    console.log('checked',checked)
-    const data = filterData.filter((item) =>{
+    const data = rowData.filter((item) =>{
       if(!checked){return item.register === 'y'}
       else if(checked){return item.register === 'n'}
      })
@@ -146,23 +102,19 @@ function App() {
             <th scope="col">#</th>
             <th scope="col">
               <div style={{ display: "flex" }}>
-                <p>{selectData}</p>
-                <Text data={conditionData} filterData={filterData} selectData={selectData} setFilterData={setFilterData} athlete={athlete} setAthlete={setAthlete}  setSelectData={setSelectData} />
+                <Text data={conditionData} filterData={filterData} selectData={selectData} setSelectData={setSelectData} setFilterData={setFilterData} athlete={athlete} setAthlete={setAthlete}   />
               </div>
             </th>
             <th scope="col"> <input type="text" /></th>
             <th scope="col">
             <div style={{ display: "flex" }}>
-              <Date data={conditionDate} setSelectDate={setSelectDate}  secSelectDate={secSelectDate} setSecSelectDate={setSecSelectDate} fsSelectDate={fsSelectDate} dateFilter={dateFilter}/>
+              <Date data={conditionDate} filterData={filterData} setFilterData={setFilterData} setSelectDate={setSelectDate}  secSelectDate={secSelectDate} setSecSelectDate={setSecSelectDate} fsSelectDate={fsSelectDate} setFsSelectDate={setFsSelectDate} selectDate={selectDate}/>
             </div>
             </th>
             <th scope="col"></th>
             <th scope="col">
             <div style={{ display: "flex" }}>
-              <h3>h</h3>
-              <NumberFilter data={DropdownNumber} filterData={filterData}  numberData={numberData} setFilterData={setFilterData} number={number} setNumber={setNumber}/>
-              
-              {/* <input type="number" onChange={numberFilter}  value={numberData}/>  */}
+              <NumberFilter data={DropdownNumber} filterData={filterData} setFilterData={setFilterData} number={number} setNumber={setNumber} numberData={numberData}  setNumberData={setNumberData} />
              </div> 
              </th>
             <th scope="col"> <input type="number" /> </th>
@@ -172,7 +124,7 @@ function App() {
             <th scope="col"> <input type="number" /> </th>
           </tr>
         </thead>
-        {filterData?.slice(0, 10)?.map((item) => (
+        {(!filterData ? rowData : filterData)?.slice(0, 10)?.map((item) => (
           <>
             <tbody key={item.id}>
               <tr>
