@@ -51,12 +51,12 @@ function App() {
     {id:'!=',data:'Not Equal'},
   ]
   
-useEffect(() => {
-  setTimeout(() => {
-    setFilterData(datafil)
-  }, 3000);
+// useEffect(() => {
+//   // setTimeout(() => {
+//   //   setFilterData(datafil)
+//   // }, 3000);
   
-},[numberData,fsSelectDate,athlete])
+// },[numberData,fsSelectDate,athlete])
   // useEffect(() => {
     // setFilterData(datafil)
   //    fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
